@@ -1,0 +1,126 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  // url      = env("DATABASE_URL")
+  url      = "postgresql://postgres:12341234@localhost:5432/sportapp?schema=public"
+}
+
+model Production {
+  id            String    @id @default(cuid())
+  name          String
+  price         Int
+  numberStar    Int
+  numberProduct Int
+  descriptions  String
+  status        String
+  genners       String
+  category      Category  @relation(fields: [categoryId], references: [id])
+  brandId       String
+  brand         Brand     @relation(fields: [brandId], references: [id])
+  size          String[]
+  color         String[]
+  images        Image[]
+  categoryId    String
+  saleId        String
+  productNew           String
+  sale          Sale      @relation(fields: [saleId], references: [id])
+  comments      Comment[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Category {
+  id          String       @id @default(cuid())
+  name        String
+  status      String
+  productions Production[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Brand {
+  id          String       @id @default(cuid())
+  name        String
+  productions Production[]
+  status      String
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Sale {
+  id          String       @id @default(cuid())
+  percent     Int
+  productions Production[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model User {
+  id        String    @id @default(cuid())
+  gmail     String
+  name      String
+  orders    Order[]
+  Comment   Comment[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Order {
+  id                String           @id @default(cuid())
+  userId            String
+  user              User             @relation(fields: [userId], references: [id])
+  ShippingAddress   ShippingAddress? @relation(fields: [shippingAddressId], references: [id])
+  shippingAddressId String?
+  BillingAddress    BillingAddress?  @relation(fields: [billingAddressId], references: [id])
+  billingAddressId  String?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+}
+
+model ShippingAddress {
+  id          String   @id @default(cuid())
+  name        String
+  street      String
+  status      String
+  description String
+  phone       String
+  orders      Order[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model BillingAddress {
+  id          String   @id @default(cuid())
+  name        String
+  street      String
+  status      String
+  description String
+  phone       String
+  orders      Order[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Image {
+  id        String     @id @default(cuid())
+  path      String
+  name      String
+  productId String
+  product   Production @relation(fields: [productId], references: [id])
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Comment {
+  id           String     @id @default(cuid())
+  description  String
+  productionId String
+  product      Production @relation(fields: [productionId], references: [id])
+  userId       String
+  user         User       @relation(fields: [userId], references: [id])
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
